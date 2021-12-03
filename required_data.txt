@@ -1,0 +1,45 @@
+/*****************************************************/
+1. Per core Data plane CPU
+
+request pfe execute target fwdd command "show i386 cpu
+
+root@vsrx1# run request pfe execute target fwdd command "show i386 cpu"
+================ tnp_0x1000080 ================
+SENT: Ukern command: show i386 cpu
+
+CPU   Util WUtil Status SchedCounter
+1     0     0     alive  6511
+2     0     0     alive  6511
+3     0     0     alive  6511
+Average [cpu0-2](  0) (  0)
+
+/*****************************************************/
+
+2. CPU utlization of IO thread if SW-RSS is engaged 
+
+root@vsrx1# run request pfe execute target fwdd command "show swrss io"
+================ tnp_0x1000080 ================
+SENT: Ukern command: show swrss io
+
+ IO CPU   current usage   last usage   sched
+ 0            4            4          699680
+
+/*****************************************************/
+
+root@vsrx1# run show chassis routing-engine
+Routing Engine status:
+    Total memory              7953 MB Max  4931 MB used ( 62 percent)
+      Control plane memory    7953 MB Max  4931 MB used ( 62 percent)
+    5 sec CPU utilization:
+      User                       0 percent
+      Background                 0 percent
+      Kernel                     3 percent
+      Interrupt                  0 percent
+      Idle                      97 percent
+    Model                          VSRX RE
+    Start time                     2020-07-07 11:33:21 UTC
+    Uptime                         1 hour, 56 minutes, 8 seconds
+    Last reboot reason             Router rebooted after a normal shutdown.
+    Load averages:                 1 minute   5 minute  15 minute
+                                       3.31       3.65       3.72
+

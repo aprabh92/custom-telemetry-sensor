@@ -1,0 +1,86 @@
+/* 
+Author: Aravind Prabhakar
+Version: v1
+Date: 7-9-2020
+Description : Custom RPC call for Per CPU utilization for vSRX. This would 
+              be used as a custom yang with action script since current vSRX 
+              does not return an XML structured output which does not allow
+              us to use xmlproxyd to create custom telemetry sensors. The 
+              below Yang has been constructed following RFC 6020(1.0) / RFC 7950(1.1)
+
+To Do:
+1. Validate data types. Not all are strings, but processing over regex and lxml, it returns 
+a string currently. Might need to change to int
+2. Add IO monitoring support RPC  
+*/
+
+module rpc-fwdd-cpu {
+    namespace "http://custom/fwdd";
+    prefix "rpc-cli";
+    
+    /*
+    import junos-extension-odl {
+        prefix junos-odl;
+    }
+    */
+
+    import junos-extension {
+        prefix junos;
+    }
+    
+    organization "Juniper Networks";
+
+    description "Custom RPC call for Per CPU utilization which 
+                 creates xml structured output by using custom 
+                 schema. Typical output is not xml structured 
+                 and value is returned in <output></output>";
+
+    contact "Aravind Prabhakar
+             <mailto: aprabh@juniper.net>";
+
+    rpc ipsec-fwdd {
+        description " Obtain Per CPU utilization from PFE";
+        
+        junos:command 'show custom fwdd' {
+            junos:action-execute {
+                junos:script "rpc-fwdd-cpu-util.py";
+            }
+        }
+
+        input {
+            leaf cpu {
+                type empty;
+            }
+
+            // Not used currently 
+            /*leaf io {
+                type empty;
+            }*/
+        }
+
+        output {
+            container customFwddCpu {
+                list cpu {
+                    key cpu-num;
+                    leaf cpu-num {
+                        description "CPU number";
+                        type string;
+                    }
+                    leaf util {
+                        description "CPU Utilization";
+                        type string;
+                    }
+                    leaf wutil {
+                        type string;
+                    }
+                    leaf status {
+                        type string;
+                    }
+                    leaf schedcounter {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+}

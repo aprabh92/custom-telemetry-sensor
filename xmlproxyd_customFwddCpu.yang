@@ -1,0 +1,58 @@
+/*
+Author: Aravind Prabhakar
+Version: v1
+Date: 7-9-2020
+Description: Xmlproxyd yang to generate a Custom telemetry sensor
+             for the custom RPC call " show custom ipsec cpu" in 
+             vSRX 3.0 to ingest using gRPC into  healthbot
+
+*/
+module xmlproxyd_customFwddCpu {
+    prefix "rpc-cli-xmld";
+    namespace "http://custom/fwdd";
+    import drend {
+        prefix dr;
+    }
+    
+    grouping customFwddCpu {
+        list cpu {
+            dr:source cpu;
+            key cpu-num;
+            leaf cpu-num {
+                description "CPU number";
+                type string;
+                dr:source cpu-num;
+            }
+            leaf util {
+                description "CPU Utilization";
+                type string;
+                dr:source util;
+            }
+            leaf wutil {
+                type string;
+                dr:source wutil;
+            }
+            leaf status {
+                type string;
+                dr:source status;
+            }
+            leaf schedcounter {
+                type string;
+                dr:source schedcounter;
+            }
+    	}
+    }
+    dr:command-app "xmlproxyd";
+    rpc juniper-netconf-get  {
+        dr:command-top-of-output "/customFwddCpu";
+        dr:command-full-name "drend juniper-netconf-get";
+        dr:cli-command "show custom fwdd cpu"; 
+        dr:command-help "default <get> rpc";
+        output {
+                container customFwddCpu {
+                    dr:source "/customFwddCpu";
+                    uses customFwddCpu;
+                }
+            }
+        }
+    }
